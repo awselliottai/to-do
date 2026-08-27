@@ -23,9 +23,9 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-button, input { font: inherit; }
+button, input, textarea { font: inherit; }
 button { cursor: pointer; }
-button:disabled, input:disabled { cursor: not-allowed; opacity: .55; }
+button:disabled, input:disabled, textarea:disabled { cursor: not-allowed; opacity: .55; }
 
 .sr-only {
   position: absolute;
@@ -106,8 +106,8 @@ button:disabled, input:disabled { cursor: not-allowed; opacity: .55; }
 }
 
 .task-composer:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px rgb(56 217 232 / 20%); }
-.task-composer input { min-width: 0; flex: 1; border: 0; outline: 0; background: transparent; color: var(--text); padding: 0 10px; }
-.task-composer input::placeholder { color: #84909f; }
+.task-composer textarea { min-width: 0; flex: 1; align-self: center; min-height: 26px; max-height: 220px; resize: none; overflow-y: auto; border: 0; outline: 0; background: transparent; color: var(--text); line-height: 26px; padding: 0 10px; }
+.task-composer textarea::placeholder { color: #84909f; }
 
 .task-composer button, .save-button {
   border: 0;

@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { FormEvent, useEffect, useMemo, useState } from 'react';
+import { FormEvent, useEffect, useMemo, useRef, useState } from 'react';
 
 import { TaskRow, type ClientTask } from '@/app/ui/task-row';
 
@@ -32,7 +32,19 @@ export function TaskDashboard() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const composerTextareaRef = useRef<HTMLTextAreaElement | null>(null);
   const today = localDate();
+
+  function resizeComposer() {
+    const textarea = composerTextareaRef.current;
+    if (!textarea) return;
+    textarea.style.height = 'auto';
+    textarea.style.height = `${textarea.scrollHeight}px`;
+  }
+
+  useEffect(() => {
+    resizeComposer();
+  }, [draft]);
 
   useEffect(() => {
     let cancelled = false;
@@ -131,7 +143,16 @@ export function TaskDashboard() {
 
         <form className="task-composer" onSubmit={addTask}>
           <label className="sr-only" htmlFor="new-task">New task title</label>
-          <input id="new-task" value={draft} onChange={(event) => setDraft(event.target.value)} placeholder={inputHint} disabled={submitting} />
+          <textarea
+            ref={composerTextareaRef}
+            id="new-task"
+            rows={1}
+            value={draft}
+            onChange={(event) => setDraft(event.target.value)}
+            onInput={resizeComposer}
+            placeholder={inputHint}
+            disabled={submitting}
+          />
           <button type="submit" disabled={submitting || !draft.trim()}>{submitting ? 'Adding…' : 'Add task'}</button>
         </form>
 

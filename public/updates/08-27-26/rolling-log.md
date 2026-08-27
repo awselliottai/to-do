@@ -51,3 +51,12 @@
   - **DB/Data:** No persisted-data behavior changed.
   - **Verification:** `pnpm run typecheck`, `pnpm run lint`, and `git diff --check` passed. No browser check was run because this was a CSS-token-only change.
   - **Follow-ups:** None.
+
+- `18:19` — **Auto-expanding task composer**
+  - **Prompt:** Adjust the task input so entered text remains visible instead of perpetually scrolling in one row.
+  - **Summary:** Replaced the task composer’s single-line input with an auto-resizing textarea that grows as the task is typed, with a capped height and internal scroll for unusually long drafts.
+  - **Why:** Lets people review the complete task text while composing it without losing the current form submission workflow.
+  - **Files:** `app/ui/task-dashboard.tsx`, `app/globals.css`
+  - **DB/Data:** No persisted-data behavior changed.
+  - **Verification:** `pnpm run typecheck` and `git diff --check` passed.
+  - **Follow-ups:** None.
