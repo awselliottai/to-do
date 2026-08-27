@@ -19,6 +19,7 @@
   "dependencies": {
     "@neondatabase/serverless": "^1.0.2",
     "@t3-oss/env-nextjs": "^0.12.0",
+    "@tailwindcss/typography": "^0.5.19",
     "dotenv": "^16.4.7",
     "drizzle-orm": "^0.41.0",
     "drizzle-zod": "^0.7.1",
