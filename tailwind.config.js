@@ -16,5 +16,7 @@ module.exports = {
             },
         },
     },
+    // This configuration file uses CommonJS because Tailwind loads it directly.
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     plugins: [require('@tailwindcss/typography')],
 }

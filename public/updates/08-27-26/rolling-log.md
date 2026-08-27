@@ -24,3 +24,12 @@
   - **DB/Data:** No data behavior changed.
   - **Verification:** `pnpm run typecheck` passed; `git diff --check` passed; desktop and 390px mobile browser checks rendered without a Next.js error overlay.
   - **Follow-ups:** Connect the dashboard state to persisted tasks when the API workflow is added.
+
+- `11:46` — **Persistent mobile-first task workflow**
+  - **Prompt:** Simplify the prototype into an intuitive, mobile-responsive service workflow, then proceed with the proposed implementation.
+  - **Summary:** Replaced the dashboard prototype with a focused Today, Inbox, and Completed task experience. Tasks can now be created, scheduled, edited, completed, and deleted through persistent API-backed interactions.
+  - **Why:** Centers the product on the shortest useful task loop and removes decorative or nonfunctional dashboard controls.
+  - **Files:** `app/ui/task-dashboard.tsx`, `app/ui/task-row.tsx`, `app/globals.css`, `app/api/tasks/route.ts`, `app/api/tasks/[taskId]/route.ts`, `lib/db/schema/tasks.ts`, `lib/db/tasks.ts`, `lib/db/migrations/0001_flippant_shadow_king.sql`, `README.md`
+  - **DB/Data:** Added nullable `tasks.due_date` and applied the migration to Neon. Existing tasks remain compatible; a missing due date places an incomplete task in Inbox.
+  - **Verification:** `pnpm run lint` and `pnpm run typecheck` passed; `git diff --check` passed; browser verification on a 390px viewport successfully created, edited, completed, viewed, and deleted a temporary task; accessibility audit reported no violations.
+  - **Follow-ups:** Add authentication and user-scoped task ownership before exposing this shared workspace as a multi-user or monetized service.

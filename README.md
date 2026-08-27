@@ -1,36 +1,33 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Taskly
 
-## Getting Started
+Taskly is a focused, mobile-first task app built with Next.js, Neon Postgres, and Drizzle. Its core workflow is intentionally small: capture a task, decide whether it belongs in Today or Inbox, then complete it.
 
-First, run the development server:
+## Core workflow
+
+- **Today** shows incomplete tasks due today.
+- **Inbox** holds uncategorized, unscheduled tasks.
+- **Completed** retains completed tasks until they are deleted.
+- Each task can be edited, scheduled, completed, or deleted from the task list.
+
+The UI calls the task API directly, so task changes persist across refreshes.
+
+## Local development
+
+Create `.env.local` with `DATABASE_URL` and `DATABASE_URL_UNPOOLED` values for a Neon Postgres database, then run:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+pnpm install
+pnpm run migrate
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## API
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `GET /api/tasks` — list tasks
+- `POST /api/tasks` — create a task with `title`, optional `description`, and optional `dueDate` (`YYYY-MM-DD`)
+- `PATCH /api/tasks/:taskId` — update `title`, `description`, `dueDate`, or `completed`
+- `DELETE /api/tasks/:taskId` — delete a task
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Authentication and user-scoped ownership are deliberately not implemented yet; this is currently a single shared task workspace. Add an authentication boundary before deploying it as a multi-user service.

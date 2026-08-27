@@ -1,121 +1,147 @@
 'use client';
 
-import { FormEvent, useMemo, useState } from 'react';
+import Link from 'next/link';
+import { FormEvent, useEffect, useMemo, useState } from 'react';
 
-type Filter = 'all' | 'today' | 'upcoming' | 'completed';
+import { TaskRow, type ClientTask } from '@/app/ui/task-row';
 
-type Task = {
-  id: number;
-  title: string;
-  category: string;
-  due: string;
-  completed: boolean;
-  starred?: boolean;
-  when: 'today' | 'upcoming';
-};
+type View = 'today' | 'inbox' | 'completed';
 
-const initialTasks: Task[] = [
-  { id: 1, title: 'Review project brief', category: 'Work', due: '10:00 AM', completed: true, when: 'today' },
-  { id: 2, title: 'Design new landing page', category: 'Work', due: '12:30 PM', completed: false, starred: true, when: 'today' },
-  { id: 3, title: 'Pick up groceries', category: 'Personal', due: '4:00 PM', completed: false, when: 'today' },
-  { id: 4, title: 'Call Mom', category: 'Personal', due: '6:30 PM', completed: false, when: 'today' },
-  { id: 5, title: 'Plan next week', category: 'Work', due: 'Tomorrow', completed: false, when: 'upcoming' },
+const views: { id: View; label: string }[] = [
+  { id: 'today', label: 'Today' },
+  { id: 'inbox', label: 'Inbox' },
+  { id: 'completed', label: 'Completed' },
 ];
 
-const navItems: { filter: Filter; label: string; icon: string }[] = [
-  { filter: 'all', label: 'All tasks', icon: '▦' },
-  { filter: 'today', label: 'Today', icon: '◷' },
-  { filter: 'upcoming', label: 'Upcoming', icon: '□' },
-  { filter: 'completed', label: 'Completed', icon: '✓' },
-];
+function localDate() {
+  const now = new Date();
+  const offset = now.getTimezoneOffset() * 60_000;
+  return new Date(now.getTime() - offset).toISOString().slice(0, 10);
+}
+
+function readableDate(date: string) {
+  return new Intl.DateTimeFormat(undefined, { weekday: 'long', month: 'long', day: 'numeric' }).format(
+    new Date(`${date}T12:00:00`),
+  );
+}
 
 export function TaskDashboard() {
-  const [tasks, setTasks] = useState(initialTasks);
-  const [filter, setFilter] = useState<Filter>('today');
+  const [tasks, setTasks] = useState<ClientTask[]>([]);
+  const [view, setView] = useState<View>('today');
   const [draft, setDraft] = useState('');
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const today = localDate();
+
+  useEffect(() => {
+    let cancelled = false;
+
+    fetch('/api/tasks', { cache: 'no-store' })
+      .then(async (response) => {
+        if (!response.ok) throw new Error('Unable to load your tasks.');
+        return response.json() as Promise<ClientTask[]>;
+      })
+      .then((loadedTasks) => {
+        if (!cancelled) setTasks(loadedTasks);
+      })
+      .catch((cause: unknown) => {
+        if (!cancelled) setError(cause instanceof Error ? cause.message : 'Unable to load your tasks.');
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+
+    return () => { cancelled = true; };
+  }, []);
 
   const visibleTasks = useMemo(() => tasks.filter((task) => {
-    if (filter === 'all') return true;
-    if (filter === 'completed') return task.completed;
-    return task.when === filter;
-  }), [filter, tasks]);
+    if (view === 'completed') return task.completed;
+    if (view === 'inbox') return !task.completed && !task.dueDate;
+    return !task.completed && task.dueDate === today;
+  }), [tasks, today, view]);
 
-  const completedToday = tasks.filter((task) => task.when === 'today' && task.completed).length;
-  const totalToday = tasks.filter((task) => task.when === 'today').length;
+  const counts = useMemo(() => ({
+    today: tasks.filter((task) => !task.completed && task.dueDate === today).length,
+    inbox: tasks.filter((task) => !task.completed && !task.dueDate).length,
+    completed: tasks.filter((task) => task.completed).length,
+  }), [tasks, today]);
 
-  function toggleTask(id: number) {
-    setTasks((current) => current.map((task) => task.id === id ? { ...task, completed: !task.completed } : task));
-  }
-
-  function addTask(event: FormEvent<HTMLFormElement>) {
+  async function addTask(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const title = draft.trim();
     if (!title) return;
 
-    setTasks((current) => [{
-      id: Date.now(), title, category: 'Personal', due: 'Today', completed: false, when: 'today',
-    }, ...current]);
-    setDraft('');
+    setSubmitting(true);
+    setError(null);
+    try {
+      const response = await fetch('/api/tasks', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title, dueDate: view === 'inbox' ? null : today }),
+      });
+      if (!response.ok) throw new Error('Unable to add that task.');
+      const task: ClientTask = await response.json();
+      setTasks((current) => [task, ...current]);
+      setDraft('');
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : 'Unable to add that task.');
+    } finally {
+      setSubmitting(false);
+    }
   }
 
-  function selectFilter(nextFilter: Filter) {
-    setFilter(nextFilter);
-    setMenuOpen(false);
+  async function patchTask(id: string, update: Partial<Pick<ClientTask, 'title' | 'dueDate' | 'completed'>>) {
+    setError(null);
+    const response = await fetch(`/api/tasks/${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(update),
+    });
+    if (!response.ok) throw new Error('Unable to save that task.');
+    const task: ClientTask = await response.json();
+    setTasks((current) => current.map((item) => item.id === task.id ? task : item));
   }
+
+  async function removeTask(id: string) {
+    setError(null);
+    const response = await fetch(`/api/tasks/${id}`, { method: 'DELETE' });
+    if (!response.ok) throw new Error('Unable to delete that task.');
+    setTasks((current) => current.filter((task) => task.id !== id));
+  }
+
+  const currentView = views.find((item) => item.id === view)!;
+  const inputHint = view === 'inbox' ? 'Add to Inbox' : 'Add a task for today';
 
   return (
-    <main className="task-app-shell">
-      <aside className={`sidebar ${menuOpen ? 'sidebar-open' : ''}`} aria-label="Task navigation">
-        <div className="brand-row">
-          <div className="brand-mark">✓</div>
-          <span>Taskly</span>
-          <button className="mobile-close" type="button" aria-label="Close navigation" onClick={() => setMenuOpen(false)}>×</button>
-        </div>
-        <nav className="task-nav">
-          {navItems.map((item) => (
-            <button className={`nav-item ${filter === item.filter ? 'nav-item-active' : ''}`} key={item.filter} type="button" onClick={() => selectFilter(item.filter)}>
-              <span className="nav-icon" aria-hidden="true">{item.icon}</span>{item.label}
-              {item.filter === 'all' && <span className="nav-count">{tasks.length}</span>}
-            </button>
-          ))}
+    <main className="task-app">
+      <header className="app-header">
+        <Link className="brand" href="/" aria-label="Taskly home"><span aria-hidden="true">✓</span>Taskly</Link>
+        <nav aria-label="Task views">
+          {views.map((item) => <button className={view === item.id ? 'active' : ''} key={item.id} type="button" onClick={() => setView(item.id)}>{item.label}<small>{counts[item.id]}</small></button>)}
         </nav>
-        <div className="sidebar-section">
-          <p className="sidebar-label">LISTS</p>
-          <button className="list-item" type="button" onClick={() => selectFilter('today')}><span className="list-dot list-dot-violet" />Work <span>{tasks.filter((task) => task.category === 'Work' && !task.completed).length}</span></button>
-          <button className="list-item" type="button" onClick={() => selectFilter('all')}><span className="list-dot list-dot-orange" />Personal <span>{tasks.filter((task) => task.category === 'Personal' && !task.completed).length}</span></button>
-          <button className="new-list" type="button"><span>＋</span> New list</button>
+      </header>
+
+      <section className="task-content">
+        <div className="page-intro">
+          <p>{view === 'today' ? readableDate(today) : 'Your tasks'}</p>
+          <h1>{currentView.label}</h1>
+          <span>{view === 'today' ? 'Start with what matters today.' : view === 'inbox' ? 'Capture it now. Sort it later.' : 'A record of your progress.'}</span>
         </div>
-        <div className="sidebar-user"><div className="avatar">AE</div><div><strong>Alex Ellis</strong><small>Free plan</small></div><button type="button" aria-label="Account options">•••</button></div>
-      </aside>
-      {menuOpen && <button className="menu-backdrop" type="button" aria-label="Close navigation" onClick={() => setMenuOpen(false)} />}
-      <section className="dashboard">
-        <header className="topbar">
-          <button className="mobile-menu" type="button" aria-label="Open navigation" onClick={() => setMenuOpen(true)}>☰</button>
-          <div className="mobile-brand"><span>✓</span> Taskly</div>
-          <button className="icon-button" type="button" aria-label="Notifications">♧<i /></button>
-          <button className="icon-button" type="button" aria-label="Settings">⚙</button>
-        </header>
-        <div className="content-wrap">
-          <section className="hero">
-            <div><p className="eyebrow">THURSDAY, AUGUST 27</p><h1>{filter === 'today' ? 'Good morning, Alex.' : navItems.find((item) => item.filter === filter)?.label}</h1><p className="subcopy">{filter === 'today' ? 'Here’s what’s on your plate today.' : 'Keep making space for what matters.'}</p></div>
-            <div className="progress-card" aria-label={`${completedToday} of ${totalToday} tasks completed`}><div className="progress-circle"><span>{Math.round((completedToday / totalToday) * 100)}%</span></div><div><strong>{completedToday} of {totalToday}</strong><small>tasks completed</small></div></div>
-          </section>
-          <form className="quick-add" onSubmit={addTask}><span className="add-symbol">＋</span><input value={draft} onChange={(event) => setDraft(event.target.value)} placeholder="Add a task for today" aria-label="New task title" /><button type="submit">Add task</button></form>
-          <section className="task-section" aria-live="polite">
-            <div className="section-heading"><h2>{filter === 'today' ? 'Today' : navItems.find((item) => item.filter === filter)?.label}</h2><span>{visibleTasks.length} {visibleTasks.length === 1 ? 'task' : 'tasks'}</span></div>
-            <div className="task-list">
-              {visibleTasks.length ? visibleTasks.map((task) => (
-                <article className={`task-row ${task.completed ? 'task-done' : ''}`} key={task.id}>
-                  <button className="task-check" type="button" aria-label={`Mark ${task.title} ${task.completed ? 'incomplete' : 'complete'}`} aria-pressed={task.completed} onClick={() => toggleTask(task.id)}>{task.completed && '✓'}</button>
-                  <div className="task-main"><h3>{task.title}</h3><p><span className={`category-dot ${task.category === 'Work' ? 'work' : 'personal'}`} />{task.category}</p></div>
-                  <div className="task-meta"><span>{task.due}</span>{task.starred && <span className="star" aria-label="Important">★</span>}<button type="button" aria-label={`More options for ${task.title}`}>•••</button></div>
-                </article>
-              )) : <div className="empty-state"><span>✓</span><p>Nothing here yet.</p><small>Enjoy the breathing room, or add a task above.</small></div>}
-            </div>
-          </section>
-          <section className="focus-card"><div className="focus-icon">✦</div><div><p className="eyebrow">FOCUS FOR TODAY</p><h2>One step at a time.</h2><p>Small, intentional progress adds up to meaningful work.</p></div><button type="button">Start focus mode <span>→</span></button></section>
-        </div>
+
+        <form className="task-composer" onSubmit={addTask}>
+          <label className="sr-only" htmlFor="new-task">New task title</label>
+          <input id="new-task" value={draft} onChange={(event) => setDraft(event.target.value)} placeholder={inputHint} disabled={submitting} />
+          <button type="submit" disabled={submitting || !draft.trim()}>{submitting ? 'Adding…' : 'Add task'}</button>
+        </form>
+
+        {error && <p className="status-message" role="alert">{error}</p>}
+        <section aria-live="polite" aria-busy={loading}>
+          <div className="list-heading"><h2>{currentView.label}</h2><span>{loading ? 'Loading…' : `${visibleTasks.length} ${visibleTasks.length === 1 ? 'task' : 'tasks'}`}</span></div>
+          <div className="task-list">
+            {loading ? <p className="empty-state">Loading your tasks…</p> : visibleTasks.length ? visibleTasks.map((task) => <TaskRow key={task.id} task={task} onUpdate={patchTask} onDelete={removeTask} />) : <div className="empty-state"><strong>{view === 'completed' ? 'Nothing completed yet.' : 'Nothing here yet.'}</strong><p>{view === 'inbox' ? 'Add something you do not want to forget.' : 'Enjoy the breathing room.'}</p></div>}
+          </div>
+        </section>
       </section>
     </main>
   );
