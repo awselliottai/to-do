@@ -128,7 +128,7 @@ export function TaskDashboard() {
   return (
     <main className="task-app">
       <header className="app-header">
-        <Link className="brand" href="/" aria-label="Taskly home"><span aria-hidden="true">✓</span>Taskly</Link>
+        <Link className="brand" href="/" aria-label="Tasks home"><span aria-hidden="true">✓</span>Tasks</Link>
         <nav aria-label="Task views">
           {views.map((item) => <button className={view === item.id ? 'active' : ''} key={item.id} type="button" onClick={() => setView(item.id)}>{item.label}<small>{counts[item.id]}</small></button>)}
         </nav>

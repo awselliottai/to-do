@@ -1,6 +1,6 @@
-# Taskly
+# Tasks
 
-Taskly is a focused, mobile-first task app built with Next.js, Neon Postgres, and Drizzle. Its core workflow is intentionally small: capture a task, decide whether it belongs in Today or Inbox, then complete it.
+Tasks is a focused, mobile-first task app built with Next.js, Neon Postgres, and Drizzle. Its core workflow is intentionally small: capture a task, decide whether it belongs in Today or Inbox, then complete it.
 
 ## Core workflow
 

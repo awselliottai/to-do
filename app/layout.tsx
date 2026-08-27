@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'Taskly — your daily to-do list',
+  title: 'Tasks — your daily to-do list',
   description: 'A calm, focused place to plan your day.',
 };
 

@@ -60,3 +60,12 @@
   - **DB/Data:** No persisted-data behavior changed.
   - **Verification:** `pnpm run typecheck` and `git diff --check` passed.
   - **Follow-ups:** None.
+
+- `18:20` — **Tasks product rename**
+  - **Prompt:** Change the name from “Taskly” to “Tasks” wherever it is implemented.
+  - **Summary:** Renamed the visible header label, home accessibility label, browser metadata title, and current README product name to “Tasks.”
+  - **Why:** Aligns the implemented product identity with the requested name.
+  - **Files:** `app/layout.tsx`, `app/ui/task-dashboard.tsx`, `README.md`
+  - **DB/Data:** No persisted-data behavior changed.
+  - **Verification:** `pnpm run typecheck` and `git diff --check` passed; no current implementation references to “Taskly” remain outside historical update logs.
+  - **Follow-ups:** Historical update-log references retain their original names as records of prior work.
