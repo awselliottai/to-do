@@ -8,8 +8,8 @@
   --border: #2c313b;
   --text: #f5f7fa;
   --muted: #a5adbb;
-  --accent: #10a37f;
-  --accent-hover: #0d8b6d;
+  --accent: #f0a13a;
+  --accent-hover: #d9892b;
   --danger: #f08080;
 }
 
@@ -69,7 +69,7 @@ button:disabled, input:disabled { cursor: not-allowed; opacity: .55; }
   place-items: center;
   border-radius: 7px;
   background: var(--accent);
-  color: #061d18;
+  color: #201503;
   font-size: 14px;
 }
 
@@ -105,7 +105,7 @@ button:disabled, input:disabled { cursor: not-allowed; opacity: .55; }
   padding: 8px;
 }
 
-.task-composer:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px rgb(16 163 127 / 18%); }
+.task-composer:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px rgb(240 161 58 / 20%); }
 .task-composer input { min-width: 0; flex: 1; border: 0; outline: 0; background: transparent; color: var(--text); padding: 0 10px; }
 .task-composer input::placeholder { color: #84909f; }
 
@@ -113,7 +113,7 @@ button:disabled, input:disabled { cursor: not-allowed; opacity: .55; }
   border: 0;
   border-radius: 9px;
   background: var(--accent);
-  color: #031a14;
+  color: #201503;
   font-weight: 800;
   padding: 0 15px;
 }
@@ -137,7 +137,7 @@ button:disabled, input:disabled { cursor: not-allowed; opacity: .55; }
 }
 
 .task-row:hover { background: var(--surface-hover); }
-.task-toggle { display: grid; width: 24px; height: 24px; flex: none; place-items: center; border: 1.5px solid #68717d; border-radius: 50%; background: transparent; color: #052119; }
+.task-toggle { display: grid; width: 24px; height: 24px; flex: none; place-items: center; border: 1.5px solid #68717d; border-radius: 50%; background: transparent; color: #201503; }
 .task-toggle:hover { border-color: var(--accent); }
 .completed .task-toggle { border-color: var(--accent); background: var(--accent); }
 .task-body { min-width: 0; flex: 1; }

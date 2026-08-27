@@ -33,3 +33,12 @@
   - **DB/Data:** Added nullable `tasks.due_date` and applied the migration to Neon. Existing tasks remain compatible; a missing due date places an incomplete task in Inbox.
   - **Verification:** `pnpm run lint` and `pnpm run typecheck` passed; `git diff --check` passed; browser verification on a 390px viewport successfully created, edited, completed, viewed, and deleted a temporary task; accessibility audit reported no violations.
   - **Follow-ups:** Add authentication and user-scoped task ownership before exposing this shared workspace as a multi-user or monetized service.
+
+- `12:12` — **Warm amber accent on retained gray theme**
+  - **Prompt:** Vary the accent further by retaining the black/gray background colors but choosing a different accent color (previous violet change was reverted).
+  - **Summary:** Replaced the OpenAI-green accent (`--accent: #10a37f`) with a warm amber-gold (`--accent: #f0a13a`, hover `#d9892b`). All black/gray surfaces and neutral tones (`--bg`, `--surface`, `--border`, `--text`, `--muted`, placeholder, editor-input fill, toggle border) were left unchanged. Companion accent-tied colors updated to the new cast: dark-on-accent text `#201503`, and focus ring `rgb(240 161 58 / 20%)`.
+  - **Why:** The prior accent was OpenAI's brand green; this new warm amber differentiates Taskly on top of the retained black/gray identity while keeping white-on-dark surfaces and accent-driven primary actions.
+  - **Files:** `app/globals.css`
+  - **DB/Data:** No persisted-data behavior changed.
+  - **Verification:** `pnpm run typecheck` passed; `git diff --check` passed; confirmed no prior green accent/palette values remain and the gray background tokens are intact.
+  - **Follow-ups:** None.
