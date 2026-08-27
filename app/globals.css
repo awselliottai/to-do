@@ -1,26 +1,573 @@
+/* ========= Theme 1: ChatGPT-like Dark/Light ========= */
+/* Tailwind v4 entry */
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 
+/* ───────── Theme tokens ───────── */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* base */
+  --bg: #0f1116;
+  --fg: #e1e1e6;
+  --elev: #1a1c23;
+  --border: #2c2f38;
+  --muted: #8a8f9b;
+  --font-geist-sans: "Inter", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-geist-mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+
+  /* Tell browser to use dark system controls (scrollbars, native inputs) */
+  color-scheme: dark;
+
+  /* accent */
+  --accent: #10a37f;
+  /* ChatGPT green */
+
+  /* user bubbles */
+  --bubble-user-bg: #20232a;
+  --bubble-user-fg: #e9e9ed;
+
+  /* bot bubbles */
+  --bubble-bot-bg: #1a1c23;
+  --bubble-bot-fg: #e1e1e6;
+
+  /* badges */
+  --badge-user-bg: #10a37f;
+  --badge-bot-bg: #2f333d;
+
+  /* buttons */
+  --btn-primary: #10a37f;
+  --btn-success: #16a34a;
+  --btn-amber: #f59e0b;
+  --btn-purple: #8b5cf6;
+  --btn-teal: #0ea5e9;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+:root.light {
+  --bg: #ffffff;
+  --fg: #1b1b1f;
+  --elev: #f7f7f7;
+  --border: #d3d3d8;
+  --muted: #6b6f79;
+
+  /* Tell browser to use light system controls */
+  color-scheme: light;
+
+  --accent: #0f766e;
+
+  --bubble-user-bg: #f2f4f7;
+  --bubble-user-fg: #1b1b1f;
+  --bubble-bot-bg: #ffffff;
+  --bubble-bot-fg: #1b1b1f;
+
+  --badge-user-bg: #10a37f;
+  --badge-bot-bg: #e0f2f1;
+
+  --btn-primary: #10a37f;
+  --btn-success: #16a34a;
+  --btn-amber: #d97706;
+  --btn-purple: #7c3aed;
+  --btn-teal: #0284c7;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* ───────── Base ───────── */
+html,
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-geist-sans);
+  font-feature-settings: "liga" 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ───────── Utilities ───────── */
+.text-muted {
+  color: var(--muted);
+}
+
+.bg-elev {
+  background-color: var(--elev);
+}
+
+.border-border {
+  border-color: var(--border);
+}
+
+.bg-bg {
+  background-color: var(--bg);
+}
+
+.text-fg {
+  color: var(--fg);
+}
+
+/* ───────── Components ───────── */
+
+/* Card */
+.card {
+  border-radius: 1rem;
+  border: 1px solid var(--border);
+  background: var(--elev);
+  padding: 1rem;
+  transition: background 0.2s;
+}
+
+.card:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+/* Card title */
+.card-title {
+  font-weight: 600;
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+}
+
+@media (min-width: 768px) {
+  .card-title {
+    font-size: 1.25rem;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* ───────── Animations ───────── */
+@keyframes modern-spinner-dash {
+  0% {
+    stroke-dasharray: 1, 150;
+    stroke-dashoffset: 0;
+  }
+
+  50% {
+    stroke-dasharray: 90, 150;
+    stroke-dashoffset: -35;
+  }
+
+  100% {
+    stroke-dasharray: 90, 150;
+    stroke-dashoffset: -124;
+  }
+}
+
+.animate-modern-spinner-dash {
+  animation: modern-spinner-dash 1.5s ease-in-out infinite;
+}
+
+/* Input */
+.input {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  background: transparent;
+  padding: 0.65rem 0.85rem;
+  color: var(--fg);
+}
+
+.input::placeholder {
+  color: var(--muted);
+}
+
+.input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(16, 163, 127, 0.35);
+}
+
+
+/* Select */
+.select {
+  width: 100%;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  background-color: var(--elev);
+  /* Use a data URI for clean SVG arrow */
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 0.5rem center;
+  background-repeat: no-repeat;
+  background-size: 1.5em 1.5em;
+  padding: 0.65rem 2.5rem 0.65rem 0.85rem;
+  color: var(--fg);
+  font-size: inherit;
+  line-height: inherit;
+  accent-color: var(--accent);
+}
+
+.select option {
+  background-color: var(--elev);
+  color: var(--fg);
+}
+
+.select:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(16, 163, 127, 0.35);
+  outline: none;
+}
+
+.select-sm {
+  padding: 0.4rem 2rem 0.4rem 0.65rem;
+  font-size: 0.875rem;
+  min-height: 2rem;
+  border-radius: 0.5rem;
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 500;
+  border: 1px solid transparent;
+  border-radius: 0.75rem;
+  transition: background 0.15s, transform 0.1s;
+}
+
+.btn:hover {
+  transform: scale(1.02);
+}
+
+/* Ghost */
+.btn-ghost {
+  background: transparent;
+  color: var(--muted);
+}
+
+.btn-ghost:hover {
+  background: rgba(16, 163, 127, 0.08);
+  color: var(--fg);
+}
+
+/* Accent variants */
+.btn-primary {
+  background: var(--btn-primary);
+  color: #fafafa;
+  border-color: var(--btn-primary);
+}
+
+.btn-primary:hover {
+  background: #0d8b6d;
+}
+
+.btn-success {
+  background: var(--btn-success);
+  color: #fafafa;
+  border-color: var(--btn-success);
+}
+
+.btn-success:hover {
+  background: #15803d;
+}
+
+.btn-amber {
+  background: var(--btn-amber);
+  color: #fafafa;
+  border-color: var(--btn-amber);
+}
+
+.btn-amber:hover {
+  background: #d97706;
+}
+
+.btn-purple {
+  background: var(--btn-purple);
+  color: #fafafa;
+  border-color: var(--btn-purple);
+}
+
+.btn-purple:hover {
+  background: #7c3aed;
+}
+
+.btn-teal {
+  background: var(--btn-teal);
+  color: #fafafa;
+  border-color: var(--btn-teal);
+}
+
+.btn-teal:hover {
+  background: #0284c7;
+}
+
+/* Chat bubbles */
+.bubble-user {
+  background: var(--bubble-user-bg);
+  color: var(--bubble-user-fg);
+  border-radius: 1rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid rgba(16, 163, 127, 0.25);
+}
+
+.bubble-bot {
+  background: var(--bubble-bot-bg);
+  color: var(--bubble-bot-fg);
+  border-radius: 1rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border);
+}
+
+/* Badges */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.15rem 0.6rem;
+  border-radius: 9999px;
+  font-weight: 600;
+  font-size: 11px;
+  color: #fff;
+}
+
+.badge-user {
+  background: var(--badge-user-bg);
+}
+
+.badge-bot {
+  background: var(--badge-bot-bg);
+  color: var(--fg);
+}
+
+/* Scrollbar */
+#chat-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+
+#chat-scroll::-webkit-scrollbar-thumb {
+  background: rgba(16, 163, 127, 0.45);
+  border-radius: 999px;
+}
+
+/* Markdown / prose tweaks */
+.prose,
+.prose-invert {
+  color: inherit;
+  max-width: 100%;
+  font-size: inherit;
+}
+
+.prose :where(p, li) {
+  margin: 0.35rem 0;
+}
+
+.prose :where(ul, ol) {
+  padding-left: 1.25rem;
+}
+
+.prose :where(strong) {
+  font-weight: 600;
+}
+
+.prose :where(em) {
+  font-style: italic;
+}
+
+/* ───────── Resizable Sidebar ───────── */
+.sidebar-resizable {
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-resizable-shell {
+  overflow: visible;
+}
+
+.sidebar-resize-handle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: -7px;
+  width: 14px;
+  height: auto;
+  cursor: col-resize;
+  z-index: 60;
+  touch-action: none;
+  transition: background 0.15s, box-shadow 0.15s;
+}
+
+/* Visible indicator line */
+.sidebar-resize-handle::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2px;
+  height: 100%;
+  background: var(--border);
+  border-radius: 1px;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.sidebar-resize-handle:hover::after,
+.sidebar-resize-handle--active::after {
+  opacity: 1;
+  background: var(--accent);
+  box-shadow: 0 0 6px rgba(16, 163, 127, 0.45);
+}
+
+/* Widen the hit-area on hover for easier grab */
+.sidebar-resize-handle:hover {
+  width: 16px;
+  right: -8px;
+}
+
+/* Full viewport overlay while dragging */
+.sidebar-resize-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 19;
+  cursor: col-resize;
+  user-select: none;
+}
+
+/* Visual workflows: automatic phone portrait layout only. */
+@media (max-width: 767px) and (orientation: portrait) {
+  .visual-mobile-page {
+    width: 100%;
+    overflow-x: clip;
+    padding-left: max(1rem, env(safe-area-inset-left));
+    padding-right: max(1rem, env(safe-area-inset-right));
+    padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
+  }
+
+  .visual-mobile-page-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .visual-mobile-page-actions>* {
+    max-width: 100%;
+    white-space: normal;
+    text-align: center;
+  }
+
+  .visual-mobile-gallery-filters {
+    max-height: min(46dvh, 28rem);
+    min-width: 0;
+    overflow-y: auto;
+  }
+
+  .visual-mobile-gallery-filters button,
+  .visual-mobile-gallery-controls button,
+  .visual-mobile-review-panel button,
+  .visual-mobile-review-search button {
+    min-height: 2.75rem;
+  }
+
+  .visual-mobile-gallery-controls {
+    align-items: stretch;
+  }
+
+  .visual-mobile-gallery-controls>div:last-child {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .visual-mobile-gallery-image {
+    height: min(62dvh, 36rem);
+    min-height: 18rem !important;
+  }
+
+  .visual-mobile-gallery-image-preview {
+    min-height: 18rem !important;
+  }
+
+  .visual-mobile-loader-search {
+    flex-direction: column;
+  }
+
+  .visual-mobile-loader-search button {
+    width: 100%;
+    min-height: 2.75rem;
+  }
+
+  .visual-mobile-loader-actions,
+  .visual-mobile-loader-reference {
+    flex-wrap: wrap;
+  }
+
+  .visual-mobile-loader-card-actions {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .visual-mobile-review-overlay {
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+    padding: 0 !important;
+  }
+
+  .visual-mobile-review-panel {
+    width: 100%;
+    height: 100dvh !important;
+    max-width: none !important;
+    border-radius: 0 !important;
+  }
+
+  .visual-mobile-review-header {
+    padding-top: max(0.75rem, env(safe-area-inset-top)) !important;
+    padding-right: max(0.75rem, env(safe-area-inset-right)) !important;
+    padding-bottom: 0.75rem !important;
+    padding-left: max(0.75rem, env(safe-area-inset-left)) !important;
+  }
+
+  .visual-mobile-review-content {
+    display: flex !important;
+    min-width: 0;
+    flex-direction: column;
+    gap: 0.75rem;
+    overflow-y: auto !important;
+    padding: 0.75rem !important;
+  }
+
+  .visual-mobile-review-image {
+    width: 100%;
+    min-height: 16rem !important;
+    height: min(52dvh, 30rem);
+    flex: none;
+  }
+
+  .visual-mobile-review-draft {
+    width: 100%;
+    height: auto !important;
+    min-height: 20rem !important;
+    flex: none;
+  }
+
+  .visual-mobile-review-chat {
+    width: 100%;
+    min-height: 28rem !important;
+    flex: none;
+  }
+
+  .visual-mobile-review-messages {
+    max-height: 60dvh;
+  }
+
+  .visual-mobile-review-composer textarea {
+    min-width: 0;
+  }
+
+  .visual-mobile-review-footer {
+    flex-wrap: wrap;
+    padding-right: max(0.75rem, env(safe-area-inset-right)) !important;
+    padding-bottom: max(0.75rem, env(safe-area-inset-bottom)) !important;
+    padding-left: max(0.75rem, env(safe-area-inset-left)) !important;
+  }
+
+  .visual-mobile-review-footer-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .visual-mobile-review-search-header {
+    flex-wrap: wrap;
+  }
+
+  .visual-mobile-review-search-form textarea {
+    min-width: 0;
+    min-height: 2.75rem;
+  }
+
+  .visual-mobile-review-search-form button {
+    width: 2.75rem;
+    height: 2.75rem;
+  }
 }
