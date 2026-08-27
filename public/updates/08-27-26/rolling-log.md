@@ -6,3 +6,21 @@
   - **DB/Data:** Created the `public.tasks` table in Neon. The smoke test inserts and updates a task inside a transaction, then rolls it back; no test data persists.
   - **Verification:** `pnpm run typecheck` passed. `pnpm run db:check` confirmed pooled and unpooled connections, table availability, and rollback-only task create/update flows. `git diff --check` passed.
   - **Follow-ups:** Add authenticated task API routes and UI using `lib/db/tasks.ts` when the product workflow is implemented.
+
+- `11:08` — **Responsive Taskly dashboard interface**
+  - **Prompt:** Create the front end interface for the to-do application and make it responsive for mobile devices.
+  - **Summary:** Replaced the starter screen with an interactive task dashboard featuring task completion, client-side quick add, list filters, progress feedback, and a mobile off-canvas navigation drawer.
+  - **Why:** Provides a polished, mobile-first daily task workflow while preserving the existing database foundation for a future persistence integration.
+  - **Files:** `app/page.tsx`, `app/ui/task-dashboard.tsx`, `app/globals.css`, `app/layout.tsx`
+  - **DB/Data:** No persisted-data behavior changed; the new interface uses in-memory example tasks.
+  - **Verification:** `pnpm run typecheck` passed; `git diff --check` passed; browser checks confirmed the desktop and 390px mobile layouts render without a Next.js error overlay, and verified task creation and completion interactions.
+  - **Follow-ups:** Connect the interface to authenticated task API routes backed by `lib/db/tasks.ts`.
+
+- `11:14` — **Dark theme application for Taskly**
+  - **Prompt:** Make the project utilize the black-and-gray-centric design style with accent colors and white text indicated in the restored global stylesheet.
+  - **Summary:** Restyled the Taskly dashboard to use the shared dark theme tokens across its background, navigation, task surfaces, text, form controls, and focus panel. Green now drives the primary actions, with purple and amber retained as secondary list accents.
+  - **Why:** Aligns the visible product with the existing dark visual system and restores high-contrast white text on dark-gray surfaces.
+  - **Files:** `app/globals.css`
+  - **DB/Data:** No data behavior changed.
+  - **Verification:** `pnpm run typecheck` passed; `git diff --check` passed; desktop and 390px mobile browser checks rendered without a Next.js error overlay.
+  - **Follow-ups:** Connect the dashboard state to persisted tasks when the API workflow is added.
