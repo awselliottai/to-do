@@ -1,0 +1,8 @@
+- `10:55` — **Neon task persistence foundation**
+  - **Prompt:** Set up and test the Neon database connection so the future application can create and update to-do tasks.
+  - **Summary:** Added the typed `tasks` schema and migration, server-side task data helpers, a database health route, and a rollback-only connectivity smoke-test command. Applied the initial migration to Neon.
+  - **Why:** Establishes a verified, reusable persistence boundary before the task UI and API are built.
+  - **Files:** `lib/db/schema/tasks.ts`, `lib/db/tasks.ts`, `lib/db/migrations/0000_fearless_pretty_boy.sql`, `app/api/health/database/route.ts`, `scripts/check-db.mjs`, `drizzle.config.ts`, `package.json`
+  - **DB/Data:** Created the `public.tasks` table in Neon. The smoke test inserts and updates a task inside a transaction, then rolls it back; no test data persists.
+  - **Verification:** `pnpm run typecheck` passed. `pnpm run db:check` confirmed pooled and unpooled connections, table availability, and rollback-only task create/update flows. `git diff --check` passed.
+  - **Follow-ups:** Add authenticated task API routes and UI using `lib/db/tasks.ts` when the product workflow is implemented.

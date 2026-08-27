@@ -7,7 +7,8 @@ export default {
     dialect: "postgresql",
     out: "./lib/db/migrations",
     dbCredentials: {
-        url: env.DATABASE_URL,             // must be set in your .env
+        // Use Neon's direct host for migration/DDL connections.
+        url: env.DATABASE_URL_UNPOOLED,
         // If your DATABASE_URL doesn't include sslmode=require (e.g. Neon), add it there.
         // Example: postgres://user:pass@host/db?sslmode=require
     },
