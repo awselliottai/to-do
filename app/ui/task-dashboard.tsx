@@ -33,7 +33,16 @@ export function TaskDashboard() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const composerTextareaRef = useRef<HTMLTextAreaElement | null>(null);
-  const today = localDate();
+  const [today, setToday] = useState(localDate);
+
+  useEffect(() => {
+    const rolloverCheck = window.setInterval(() => {
+      const currentDate = localDate();
+      setToday((current) => current === currentDate ? current : currentDate);
+    }, 60_000);
+
+    return () => window.clearInterval(rolloverCheck);
+  }, []);
 
   function resizeComposer() {
     const textarea = composerTextareaRef.current;
@@ -72,6 +81,8 @@ export function TaskDashboard() {
     if (view === 'inbox') return !task.completed && !task.dueDate;
     return !task.completed && task.dueDate === today;
   }), [tasks, today, view]);
+
+  const completedToday = useMemo(() => tasks.filter((task) => task.completed && task.dueDate === today), [tasks, today]);
 
   const counts = useMemo(() => ({
     today: tasks.filter((task) => !task.completed && task.dueDate === today).length,
@@ -163,6 +174,13 @@ export function TaskDashboard() {
             {loading ? <p className="empty-state">Loading your tasks…</p> : visibleTasks.length ? visibleTasks.map((task) => <TaskRow key={task.id} task={task} onUpdate={patchTask} onDelete={removeTask} />) : <div className="empty-state"><strong>{view === 'completed' ? 'Nothing completed yet.' : 'Nothing here yet.'}</strong><p>{view === 'inbox' ? 'Add something you do not want to forget.' : 'Enjoy the breathing room.'}</p></div>}
           </div>
         </section>
+
+        {view === 'today' && completedToday.length > 0 && <section className="completed-today" aria-live="polite">
+          <div className="list-heading"><h2>Completed today</h2><span>{completedToday.length} {completedToday.length === 1 ? 'task' : 'tasks'}</span></div>
+          <div className="task-list">
+            {completedToday.map((task) => <TaskRow key={task.id} task={task} onUpdate={patchTask} onDelete={removeTask} />)}
+          </div>
+        </section>}
       </section>
     </main>
   );

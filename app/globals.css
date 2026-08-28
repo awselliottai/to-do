@@ -125,6 +125,7 @@ button:disabled, input:disabled, textarea:disabled { cursor: not-allowed; opacit
 .list-heading h2 { margin: 0; font-size: 18px; }
 .list-heading span { color: var(--muted); font-size: 13px; }
 .task-list { border-top: 1px solid var(--border); }
+.completed-today { margin-top: 42px; }
 
 .task-row {
   position: relative;

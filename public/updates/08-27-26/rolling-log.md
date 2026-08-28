@@ -69,3 +69,12 @@
   - **DB/Data:** No persisted-data behavior changed.
   - **Verification:** `pnpm run typecheck` and `git diff --check` passed; no current implementation references to “Taskly” remain outside historical update logs.
   - **Follow-ups:** Historical update-log references retain their original names as records of prior work.
+
+- `21:16` — **Same-day completed task list**
+  - **Prompt:** Show completed tasks below the to-do list through the end of the day and allow them to be restored to the active tasks.
+  - **Summary:** Added a Today-only Completed today section beneath the active task list. Completed tasks remain visible there for the current date, and the existing completion toggle restores a task to the active Today list.
+  - **Why:** Preserves visibility of daily progress without removing completed work from the broader Completed view, while making accidental completion reversible from the same page.
+  - **Files:** `app/ui/task-dashboard.tsx`, `app/globals.css`
+  - **DB/Data:** No schema or persistence contract changed; task completion continues to use the existing PATCH endpoint.
+  - **Verification:** `pnpm run typecheck`, `pnpm run lint`, and `git diff --check` passed. `pnpm run test` could not start because the repository does not have the script's `tsx` dependency installed.
+  - **Follow-ups:** None.
