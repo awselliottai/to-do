@@ -74,7 +74,14 @@ export function TaskRow({ task, variant, onUpdate, onDelete }: TaskRowProps) {
     <button className="task-toggle" type="button" aria-label={`${task.completed ? 'Mark incomplete' : 'Complete'}: ${task.title}`} aria-pressed={task.completed} onClick={toggleCompleted} disabled={saving}>{task.completed ? '✓' : ''}</button>
     <div className="task-body">
       <h3>{task.title}</h3>
-      {task.dueDate && <p>{variant === 'overdue' ? `Set for ${formatDate(task.dueDate)} · Added ${formatDate(task.createdAt.slice(0, 10))}` : task.dueDate}</p>}
+      {task.dueDate && (variant === 'overdue' ? (
+        <div className="task-meta">
+          <span className="task-meta-date">Set for {formatDate(task.dueDate)}</span>
+          <span className="task-meta-date">Added {formatDate(task.createdAt.slice(0, 10))}</span>
+        </div>
+      ) : (
+        <p>{task.dueDate}</p>
+      ))}
       {error && <small className="task-error">{error}</small>}
     </div>
     <button className="text-button" type="button" onClick={() => setEditing((current) => !current)} disabled={saving}>{editing ? 'Close' : 'Edit'}</button>

@@ -135,6 +135,7 @@ button:disabled, input:disabled, textarea:disabled { cursor: not-allowed; opacit
 .task-row-overdue .task-toggle { border-color: #7d838d; }
 .task-row-overdue .task-body h3 { color: #d5d8dd; }
 .task-row-overdue .task-body p { color: #9298a2; }
+.task-row-overdue .task-meta-date { color: #9298a2; }
 
 .task-row {
   position: relative;
@@ -153,6 +154,8 @@ button:disabled, input:disabled, textarea:disabled { cursor: not-allowed; opacit
 .task-body { min-width: 0; flex: 1; }
 .task-body h3 { overflow: hidden; margin: 0; font-size: 15px; text-overflow: ellipsis; white-space: nowrap; }
 .task-body p { margin: 4px 0 0; color: var(--muted); font-size: 12px; }
+.task-meta { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 16px; row-gap: 2px; margin: 4px 0 0; }
+.task-meta-date { white-space: nowrap; color: var(--muted); font-size: 12px; }
 .completed h3 { color: var(--muted); text-decoration: line-through; }
 .text-button { border: 0; background: transparent; color: var(--muted); font-size: 13px; padding: 8px; }
 .text-button:hover { color: var(--text); }
