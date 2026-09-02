@@ -136,6 +136,7 @@ button:disabled, input:disabled, textarea:disabled { cursor: not-allowed; opacit
 .task-row-overdue .task-body h3 { color: #d5d8dd; }
 .task-row-overdue .task-body p { color: #9298a2; }
 .task-row-overdue .task-meta-date { color: #9298a2; }
+.task-row-overdue .task-notes { color: #9298a2; }
 
 .task-row {
   position: relative;
@@ -156,6 +157,7 @@ button:disabled, input:disabled, textarea:disabled { cursor: not-allowed; opacit
 .task-body p { margin: 4px 0 0; color: var(--muted); font-size: 12px; }
 .task-meta { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 16px; row-gap: 2px; margin: 4px 0 0; }
 .task-meta-date { white-space: nowrap; color: var(--muted); font-size: 12px; }
+.task-notes { margin: 7px 0 0; color: var(--muted); font-size: 13px; line-height: 1.45; white-space: pre-wrap; overflow-wrap: anywhere; }
 .completed h3 { color: var(--muted); text-decoration: line-through; }
 .text-button { border: 0; background: transparent; color: var(--muted); font-size: 13px; padding: 8px; }
 .text-button:hover { color: var(--text); }
@@ -164,6 +166,8 @@ button:disabled, input:disabled, textarea:disabled { cursor: not-allowed; opacit
 .task-editor { display: grid; width: 100%; grid-template-columns: minmax(0, 1fr) 145px auto; gap: 10px; margin: 8px 0 2px 37px; }
 .task-editor label { color: var(--muted); font-size: 12px; }
 .task-editor input { display: block; width: 100%; min-height: 38px; margin-top: 5px; border: 1px solid var(--border); border-radius: 7px; background: #111419; color: var(--text); padding: 0 9px; }
+.task-editor textarea { display: block; width: 100%; min-height: 76px; margin-top: 5px; border: 1px solid var(--border); border-radius: 7px; background: #111419; color: var(--text); padding: 8px 9px; resize: vertical; line-height: 1.4; font: inherit; }
+.task-editor .task-notes-field { grid-column: 1 / -1; }
 .task-editor div { display: flex; align-items: end; gap: 7px; }
 .task-editor button { min-height: 38px; }
 .delete-button { border: 0; background: transparent; color: var(--danger); padding: 0 4px; }

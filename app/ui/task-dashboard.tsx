@@ -120,7 +120,7 @@ export function TaskDashboard() {
     }
   }
 
-  async function patchTask(id: string, update: Partial<Pick<ClientTask, 'title' | 'dueDate' | 'completed'>>) {
+  async function patchTask(id: string, update: Partial<Pick<ClientTask, 'title' | 'description' | 'dueDate' | 'completed'>>) {
     setError(null);
     const response = await fetch(`/api/tasks/${id}`, {
       method: 'PATCH',

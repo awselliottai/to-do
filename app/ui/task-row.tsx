@@ -15,7 +15,7 @@ export type ClientTask = {
 type TaskRowProps = {
   task: ClientTask;
   variant?: 'overdue';
-  onUpdate: (id: string, update: Partial<Pick<ClientTask, 'title' | 'dueDate' | 'completed'>>) => Promise<void>;
+  onUpdate: (id: string, update: Partial<Pick<ClientTask, 'title' | 'description' | 'dueDate' | 'completed'>>) => Promise<void>;
   onDelete: (id: string) => Promise<void>;
 };
 
@@ -29,6 +29,7 @@ export function TaskRow({ task, variant, onUpdate, onDelete }: TaskRowProps) {
   const [editing, setEditing] = useState(false);
   const [title, setTitle] = useState(task.title);
   const [dueDate, setDueDate] = useState(task.dueDate ?? '');
+  const [notes, setNotes] = useState(task.description ?? '');
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -50,7 +51,7 @@ export function TaskRow({ task, variant, onUpdate, onDelete }: TaskRowProps) {
     setSaving(true);
     setError(null);
     try {
-      await onUpdate(task.id, { title: title.trim(), dueDate: dueDate || null });
+      await onUpdate(task.id, { title: title.trim(), description: notes.trim() || null, dueDate: dueDate || null });
       setEditing(false);
     } catch {
       setError('Could not save this task.');
@@ -66,9 +67,12 @@ export function TaskRow({ task, variant, onUpdate, onDelete }: TaskRowProps) {
       await onDelete(task.id);
     } catch {
       setError('Could not delete this task.');
+    } finally {
       setSaving(false);
     }
   }
+
+  const trimmedNotes = task.description?.trim();
 
   return <article className={`task-row ${task.completed ? 'completed' : ''} ${variant ? `task-row-${variant}` : ''}`}>
     <button className="task-toggle" type="button" aria-label={`${task.completed ? 'Mark incomplete' : 'Complete'}: ${task.title}`} aria-pressed={task.completed} onClick={toggleCompleted} disabled={saving}>{task.completed ? '✓' : ''}</button>
@@ -82,12 +86,14 @@ export function TaskRow({ task, variant, onUpdate, onDelete }: TaskRowProps) {
       ) : (
         <p>{task.dueDate}</p>
       ))}
+      {trimmedNotes && <p className="task-notes">{trimmedNotes}</p>}
       {error && <small className="task-error">{error}</small>}
     </div>
     <button className="text-button" type="button" onClick={() => setEditing((current) => !current)} disabled={saving}>{editing ? 'Close' : 'Edit'}</button>
     {editing && <form className="task-editor" onSubmit={save}>
       <label>Title<input value={title} onChange={(event) => setTitle(event.target.value)} disabled={saving} /></label>
       <label>When<input type="date" value={dueDate} onChange={(event) => setDueDate(event.target.value)} disabled={saving} /></label>
+      <label className="task-notes-field">Notes<textarea rows={3} value={notes} onChange={(event) => setNotes(event.target.value)} disabled={saving} /></label>
       <div><button className="save-button" type="submit" disabled={saving || !title.trim()}>{saving ? 'Saving…' : 'Save'}</button><button className="delete-button" type="button" onClick={deleteTask} disabled={saving}>Delete</button></div>
     </form>}
   </article>;

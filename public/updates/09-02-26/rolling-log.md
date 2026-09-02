@@ -6,3 +6,11 @@
   - **DB/Data:** No migration required; the existing dated-task and completion fields provide durable state, with local-date comparison handling day rollover without a cron job.
   - **Verification:** `pnpm run typecheck`, `pnpm run lint`, and `git diff --check` passed. `pnpm run test` could not start because `tsx` is not installed in the checkout.
   - **Follow-ups:** None.
+- 11:12 — **Notes field on tasks (surfacing existing `description` column)**
+  - **Prompt:** Add a persisted, database-backed “Notes” field attached to tasks, with input and neat display for current, overdue, and completed tasks.
+  - **Summary:** The schema/API already carried a nullable `description` column (never surfaced in the UI). It is now wired as an editable “Notes” field (textarea in the task editor) and rendered in every task row (overdue/current/completed) when non-empty. Reused the existing column instead of adding a redundant one; no migration required.
+  - **Why:** Users need free-form per-task context beyond a single-line title, persisted and visible across all task states.
+  - **Files:** `app/ui/task-row.tsx`, `app/ui/task-dashboard.tsx`, `app/globals.css`
+  - **DB/Data:** No schema or migration change; uses existing `tasks.description` (text, nullable). Verified via curl that PATCH persists `description` and GET returns it, then confirmed the row renders the stored note after reload.
+  - **Verification:** `pnpm run lint` and `pnpm run typecheck` passed. `pnpm run test` could not start because `tsx` is not installed in the checkout (pre-existing, also noted in prior entry). UI editing dialog confirmed via preview/in-app browser; a browser-automation round-trip of the Save button was inconclusive due to a controlled-component typing limitation, but the PATCH/GET persistence path was proven with curl.
+  - **Follow-ups:** Resolve the missing `tsx` dev-dependency so `pnpm run test` can run.
