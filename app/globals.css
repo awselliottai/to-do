@@ -126,6 +126,15 @@ button:disabled, input:disabled, textarea:disabled { cursor: not-allowed; opacit
 .list-heading span { color: var(--muted); font-size: 13px; }
 .task-list { border-top: 1px solid var(--border); }
 .completed-today { margin-top: 42px; }
+.overdue-tasks { margin-bottom: 42px; color: #c0c4ca; }
+.overdue-tasks .list-heading h2 { color: #d3d6db; }
+.overdue-tasks .list-heading span, .section-note { color: #858b95; }
+.section-note { margin: -4px 0 12px; font-size: 13px; }
+.task-row-overdue { border-color: #3b3f47; background: #17191e; }
+.task-row-overdue:hover { background: #1d2026; }
+.task-row-overdue .task-toggle { border-color: #7d838d; }
+.task-row-overdue .task-body h3 { color: #d5d8dd; }
+.task-row-overdue .task-body p { color: #9298a2; }
 
 .task-row {
   position: relative;

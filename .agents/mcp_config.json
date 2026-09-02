@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "hermes-agent": {
+      "command": "/home/awselliottai/.local/bin/hermes",
+      "args": ["mcp", "serve", "--accept-hooks"],
+      "cwd": "/home/awselliottai/to-do",
+      "env": {
+        "HOME": "/home/awselliottai"
+      }
+    }
+  }
+}

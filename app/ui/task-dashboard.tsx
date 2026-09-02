@@ -76,16 +76,22 @@ export function TaskDashboard() {
     return () => { cancelled = true; };
   }, []);
 
-  const visibleTasks = useMemo(() => tasks.filter((task) => {
+  const todayTasks = useMemo(() => tasks.filter((task) => {
     if (view === 'completed') return task.completed;
     if (view === 'inbox') return !task.completed && !task.dueDate;
     return !task.completed && task.dueDate === today;
   }), [tasks, today, view]);
 
+  const overdueTasks = useMemo(() => (
+    view === 'today'
+      ? tasks.filter((task) => !task.completed && task.dueDate !== null && task.dueDate < today)
+      : []
+  ), [tasks, today, view]);
+
   const completedToday = useMemo(() => tasks.filter((task) => task.completed && task.dueDate === today), [tasks, today]);
 
   const counts = useMemo(() => ({
-    today: tasks.filter((task) => !task.completed && task.dueDate === today).length,
+    today: tasks.filter((task) => !task.completed && task.dueDate !== null && task.dueDate <= today).length,
     inbox: tasks.filter((task) => !task.completed && !task.dueDate).length,
     completed: tasks.filter((task) => task.completed).length,
   }), [tasks, today]);
@@ -168,10 +174,18 @@ export function TaskDashboard() {
         </form>
 
         {error && <p className="status-message" role="alert">{error}</p>}
-        <section aria-live="polite" aria-busy={loading}>
-          <div className="list-heading"><h2>{currentView.label}</h2><span>{loading ? 'Loading…' : `${visibleTasks.length} ${visibleTasks.length === 1 ? 'task' : 'tasks'}`}</span></div>
+        {view === 'today' && overdueTasks.length > 0 && <section className="overdue-tasks" aria-live="polite">
+          <div className="list-heading"><h2>Overdue</h2><span>{overdueTasks.length} {overdueTasks.length === 1 ? 'task' : 'tasks'}</span></div>
+          <p className="section-note">These tasks were set for an earlier day. Finish them here or update their date.</p>
           <div className="task-list">
-            {loading ? <p className="empty-state">Loading your tasks…</p> : visibleTasks.length ? visibleTasks.map((task) => <TaskRow key={task.id} task={task} onUpdate={patchTask} onDelete={removeTask} />) : <div className="empty-state"><strong>{view === 'completed' ? 'Nothing completed yet.' : 'Nothing here yet.'}</strong><p>{view === 'inbox' ? 'Add something you do not want to forget.' : 'Enjoy the breathing room.'}</p></div>}
+            {overdueTasks.map((task) => <TaskRow key={task.id} task={task} variant="overdue" onUpdate={patchTask} onDelete={removeTask} />)}
+          </div>
+        </section>}
+
+        <section aria-live="polite" aria-busy={loading}>
+          <div className="list-heading"><h2>{currentView.label}</h2><span>{loading ? 'Loading…' : `${todayTasks.length} ${todayTasks.length === 1 ? 'task' : 'tasks'}`}</span></div>
+          <div className="task-list">
+            {loading ? <p className="empty-state">Loading your tasks…</p> : todayTasks.length ? todayTasks.map((task) => <TaskRow key={task.id} task={task} onUpdate={patchTask} onDelete={removeTask} />) : <div className="empty-state"><strong>{view === 'completed' ? 'Nothing completed yet.' : 'Nothing here yet.'}</strong><p>{view === 'inbox' ? 'Add something you do not want to forget.' : 'Enjoy the breathing room.'}</p></div>}
           </div>
         </section>
 

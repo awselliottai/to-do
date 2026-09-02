@@ -1,0 +1,8 @@
+- 14:00 — **Keep unfinished dated tasks visible after their day**
+  - **Prompt:** Show incomplete tasks from prior days in a gray overdue list on Today and persist their lifecycle.
+  - **Summary:** Today now derives an overdue section from persisted `dueDate`, `completed`, and `createdAt` values. Overdue tasks remain editable and can be completed through the existing task PATCH endpoint; the Today badge includes current and overdue dated tasks.
+  - **Why:** Tasks previously disappeared from every actionable view as soon as their due date passed.
+  - **Files:** `app/ui/task-dashboard.tsx`, `app/ui/task-row.tsx`, `app/globals.css`
+  - **DB/Data:** No migration required; the existing dated-task and completion fields provide durable state, with local-date comparison handling day rollover without a cron job.
+  - **Verification:** `pnpm run typecheck`, `pnpm run lint`, and `git diff --check` passed. `pnpm run test` could not start because `tsx` is not installed in the checkout.
+  - **Follow-ups:** None.
