@@ -14,3 +14,11 @@
   - **DB/Data:** No schema or migration change; uses existing `tasks.description` (text, nullable). Verified via curl that PATCH persists `description` and GET returns it, then confirmed the row renders the stored note after reload.
   - **Verification:** `pnpm run lint` and `pnpm run typecheck` passed. `pnpm run test` could not start because `tsx` is not installed in the checkout (pre-existing, also noted in prior entry). UI editing dialog confirmed via preview/in-app browser; a browser-automation round-trip of the Save button was inconclusive due to a controlled-component typing limitation, but the PATCH/GET persistence path was proven with curl.
   - **Follow-ups:** Resolve the missing `tsx` dev-dependency so `pnpm run test` can run.
+- 11:17 — **Fix: Close button overlapping task dates when editing; make Close prominent**
+  - **Prompt:** The Close button rendered behind the “Set for / Added” dates when editing a note, creating a cluttered layout; only Save and Delete appeared obvious. Make Close more visually prominent.
+  - **Summary:** `.task-row` was a nowrap flex row, so the `width:100%` editor form was squeezed onto the same line as the toggle, dates, and the Close control, pushing Close up behind the dates. Added `flex-wrap: wrap` to `.task-row` so the editor form drops to its own full-width line while the toggle/dates/action stay on the top line. Styled the Close button (bordered secondary button, top-aligned, `✕ Close` label) while editing so it reads as a distinct third option alongside Save/Delete.
+  - **Why:** The editing state should present a clear Close affordance without overlapping the task metadata.
+  - **Files:** `app/ui/task-row.tsx`, `app/globals.css`
+  - **DB/Data:** None.
+  - **Verification:** `pnpm run typecheck` passed; `pnpm run lint` re-ran. Confirmed live in Chrome via element tree: dates at x≤−1070, Close button at x−570–−454 (top-right, clear of dates); editor form (Title/When/Notes/Save/Delete) on its own line below.
+  - **Follow-ups:** None.

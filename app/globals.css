@@ -141,6 +141,7 @@ button:disabled, input:disabled, textarea:disabled { cursor: not-allowed; opacit
 .task-row {
   position: relative;
   display: flex;
+  flex-wrap: wrap;
   min-height: 72px;
   align-items: center;
   gap: 13px;
@@ -161,6 +162,16 @@ button:disabled, input:disabled, textarea:disabled { cursor: not-allowed; opacit
 .completed h3 { color: var(--muted); text-decoration: line-through; }
 .text-button { border: 0; background: transparent; color: var(--muted); font-size: 13px; padding: 8px; }
 .text-button:hover { color: var(--text); }
+.close-button {
+  align-self: flex-start;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text);
+  font-weight: 600;
+  padding: 7px 12px;
+}
+.close-button:hover { border-color: var(--accent); color: var(--accent); background: var(--surface-hover); }
 .task-error { display: block; margin-top: 5px; color: #ffb4b4; }
 
 .task-editor { display: grid; width: 100%; grid-template-columns: minmax(0, 1fr) 145px auto; gap: 10px; margin: 8px 0 2px 37px; }

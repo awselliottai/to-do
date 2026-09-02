@@ -89,7 +89,7 @@ export function TaskRow({ task, variant, onUpdate, onDelete }: TaskRowProps) {
       {trimmedNotes && <p className="task-notes">{trimmedNotes}</p>}
       {error && <small className="task-error">{error}</small>}
     </div>
-    <button className="text-button" type="button" onClick={() => setEditing((current) => !current)} disabled={saving}>{editing ? 'Close' : 'Edit'}</button>
+    <button className={editing ? 'text-button close-button' : 'text-button'} type="button" onClick={() => setEditing((current) => !current)} disabled={saving}>{editing ? '✕ Close' : 'Edit'}</button>
     {editing && <form className="task-editor" onSubmit={save}>
       <label>Title<input value={title} onChange={(event) => setTitle(event.target.value)} disabled={saving} /></label>
       <label>When<input type="date" value={dueDate} onChange={(event) => setDueDate(event.target.value)} disabled={saving} /></label>
